@@ -13,7 +13,7 @@ app.use(express.static('public'));
 
 // initialize firebase admin
 const admin = require('firebase-admin');
-const serviceAccount = require('./scavenger-hunt-4173c-firebase-adminsdk-fbsvc-471666fac8.json'); // your Firebase credentials
+const serviceAccount = require('./scavenger-hunt-4173c-firebase-adminsdk-fbsvc-1dc5b1c88f.json'); // your Firebase credentials
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
