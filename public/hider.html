@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IKEA Hider</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    img { max-width: 200px; margin: 10px; border-radius: 8px; }
+    #gallery { display: flex; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <h1>Upload an Image for the Scavenger Hunt</h1>
+  <input type="file" id="image" name="image" accept="image/*" required />
+
+  <h2>Gallery (Live)</h2>
+  <div id="gallery"></div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <script>
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyC1RdUtKa1cZ0osTSZd93GdcbOS0w54JYU",
+        authDomain: "scavenger-hunt-4173c.firebaseapp.com",
+        databaseURL: "https://scavenger-hunt-4173c-default-rtdb.firebaseio.com",
+        projectId: "scavenger-hunt-4173c",
+        storageBucket: "scavenger-hunt-4173c.firebasestorage.app",
+        messagingSenderId: "265944270299",
+        appId: "1:265944270299:web:baef35722c962f1a0853fe",
+        measurementId: "G-PT9XTPCF1H"
+      };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const imageInput = document.getElementById('image');
+    imageInput.addEventListener('change', async () => {
+      const file = imageInput.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const response = await fetch('/upload', { method: 'POST', body: formData });
+        const data = await response.json();
+
+        if (data.imageUrl) {
+          await db.collection("images").add({
+            imageUrl: data.imageUrl,
+            finder: "Anonymous",
+            found: true,
+            approved: false
+          });
+
+          imageInput.value = ''; // reset file input
+        } else {
+          alert('Image upload failed');
+        }
+      } catch (err) {
+        console.error('Upload error:', err);
+        alert('Upload failed');
+      }
+    });
+
+    // Display one image in the gallery
+    function appendImage(url) {
+      const img = document.createElement('img');
+      img.src = url;
+      document.getElementById('gallery').appendChild(img);
+    }
+
+    // 🔄 Real-time Firestore listener
+    db.collection("images")
+      .where("approved", "==", false)
+      .onSnapshot(snapshot => {
+        document.getElementById('gallery').innerHTML = '';
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          appendImage(data.imageUrl);
+        });
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IKEA Seeker</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --ikea-blue: #0051ba;
+      --icon-size: 80px;
+    }
+
+    body {
+      font-family: 'Work Sans', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #fff3a5;
+      text-align: center;
+      height: 100vh;
+    }
+
+    h1 {
+      color: var(--ikea-blue);
+      margin-bottom: 20px;
+    }
+
+    .icon-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .icon {
+      width: var(--icon-size);
+      height: var(--icon-size);
+      background-image: url('https://cdn-icons-png.flaticon.com/512/847/847969.png');
+      background-size: cover;
+      background-position: center;
+      transition: opacity 0.3s ease;
+    }
+
+    .found {
+        opacity: 1;
+        filter: none;
+        background-color: #0051ba;
+        mask-image: url('https://cdn-icons-png.flaticon.com/512/847/847969.png');
+        mask-size: cover;
+        mask-repeat: no-repeat;
+        -webkit-mask-image: url('https://cdn-icons-png.flaticon.com/512/847/847969.png');
+        -webkit-mask-size: cover;
+        -webkit-mask-repeat: no-repeat;
+        box-shadow: 0 0 10px #0051ba80;
+        border: 2px solid #0051ba;
+        filter: saturate(50%) invert(86%) sepia(588%) saturate(1357%) hue-rotate(203deg) brightness(100%) contrast(96%)    }
+  </style>
+</head>
+<body>
+  <h1>Hiders Found</h1>
+
+  <div class="icon-container">
+    <div class="icon"></div>
+    <div class="icon"></div>
+    <div class="icon"></div>
+    <div class="icon"></div>
+    <div class="icon"></div>
+    <div class="icon"></div>
+    <div class="icon"></div>
+    <div class="icon"></div>
+    <div class="icon"></div>
+    <div class="icon"></div>
+  </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <script>
+    const TOTAL_HIDERS = 10;
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyC1RdUtKa1cZ0osTSZd93GdcbOS0w54JYU",
+        authDomain: "scavenger-hunt-4173c.firebaseapp.com",
+        databaseURL: "https://scavenger-hunt-4173c-default-rtdb.firebaseio.com",
+        projectId: "scavenger-hunt-4173c",
+        storageBucket: "scavenger-hunt-4173c.firebasestorage.app",
+        messagingSenderId: "265944270299",
+        appId: "1:265944270299:web:baef35722c962f1a0853fe",
+        measurementId: "G-PT9XTPCF1H"
+      };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Listen for changes to hidersFound
+    db.collection('meta').doc('status').onSnapshot(doc => {
+      if (doc.exists) {
+        const hidersFound = doc.data().hidersFound;
+        updateIcons(hidersFound);
+      }
+    });
+
+    function updateIcons(hidersFound) {
+      const icons = document.querySelectorAll('.icon');
+      icons.forEach((icon, index) => {
+        if (index < hidersFound) {
+          icon.classList.add('found');
+        } else {
+          icon.classList.remove('found');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

@@ -11,6 +11,17 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.static('public'));
 
+// initialize firebase admin
+const admin = require('firebase-admin');
+const serviceAccount = require('./scavenger-hunt-4173c-firebase-adminsdk-fbsvc-471666fac8.json'); // your Firebase credentials
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://scavenger-hunt-4173c-default-rtdb.firebaseio.com"
+  });
+
+const db = admin.firestore();
+
 // Upload endpoint
 app.post('/upload', upload.single('image'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
@@ -43,3 +54,18 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+app.get('/status', async (req, res) => {
+    try {
+      const statusDoc = await db.collection('meta').doc('status').get();
+      if (statusDoc.exists) {
+        res.json({ hidersRemaining: statusDoc.data().hidersRemaining });
+      } else {
+        res.json({ hidersRemaining: 10 }); // fallback value
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Could not fetch status' });
+    }
+  });
+  

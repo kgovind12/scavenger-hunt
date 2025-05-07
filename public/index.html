@@ -2,92 +2,99 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Scavenger Hunt</title>
+
+  <!-- Google fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    img { max-width: 200px; margin: 10px; border-radius: 8px; }
-    #gallery { display: flex; flex-wrap: wrap; }
+    /* IKEA colors */
+    :root {
+      --ikea-blue: #0051ba;
+      --ikea-yellow: #ffcc00;
+    }
+
+    body {
+      font-family: 'Work Sans', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: var(--ikea-blue);
+      margin-bottom: 40px;
+    }
+
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .button {
+      padding: 15px 25px;
+      font-size: 1.2rem;
+      text-align: center;
+      border-radius: 5px;
+      cursor: pointer;
+      border: none;
+      width: 200px;
+      transition: background-color 0.3s ease;
+    }
+
+    .button-hider {
+      background-color: var(--ikea-blue);
+      color: white;
+    }
+
+    .button-seeker {
+      background-color: var(--ikea-yellow);
+      color: black;
+    }
+
+    .button:hover {
+      opacity: 0.9;
+    }
+
+    /* Responsive design for mobile */
+    @media (min-width: 600px) {
+      body {
+        flex-direction: row;
+        justify-content: space-around;
+      }
+
+      .button-container {
+        flex-direction: row;
+        gap: 40px;
+      }
+
+      .a {
+        font-size: 1.5rem;
+        padding: 20px 40px;
+        text-decoration: none;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>Upload an Image for the Scavenger Hunt</h1>
-  <input type="file" id="image" name="image" accept="image/*" required />
+  <h1>Choose your role:</h1>
 
-  <h2>Gallery (Live)</h2>
-  <div id="gallery"></div>
+  <div class="button-container">
+    <!-- Hider Button -->
+    <a class="button button-hider" href="hider.html">Hider</a>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <!-- Seeker Button -->
+    <a class="button button-seeker" href="seeker.html">Seeker</a>
+  </div>
 
-  <script>
-      // Your web app's Firebase configuration
-      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-      const firebaseConfig = {
-        apiKey: "AIzaSyC1RdUtKa1cZ0osTSZd93GdcbOS0w54JYU",
-        authDomain: "scavenger-hunt-4173c.firebaseapp.com",
-        databaseURL: "https://scavenger-hunt-4173c-default-rtdb.firebaseio.com",
-        projectId: "scavenger-hunt-4173c",
-        storageBucket: "scavenger-hunt-4173c.firebasestorage.app",
-        messagingSenderId: "265944270299",
-        appId: "1:265944270299:web:baef35722c962f1a0853fe",
-        measurementId: "G-PT9XTPCF1H"
-      };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    const imageInput = document.getElementById('image');
-    imageInput.addEventListener('change', async () => {
-      const file = imageInput.files[0];
-      if (!file) return;
-
-      const formData = new FormData();
-      formData.append('image', file);
-
-      try {
-        const response = await fetch('/upload', { method: 'POST', body: formData });
-        const data = await response.json();
-
-        if (data.imageUrl) {
-          const finderName = prompt("Enter your name:");
-          await db.collection("images").add({
-            imageUrl: data.imageUrl,
-            finder: finderName || "Anonymous",
-            found: true,
-            approved: false
-          });
-
-          alert('Image uploaded and saved to database!');
-          imageInput.value = ''; // reset file input
-        } else {
-          alert('Image upload failed');
-        }
-      } catch (err) {
-        console.error('Upload error:', err);
-        alert('Upload failed');
-      }
-    });
-
-    // Display one image in the gallery
-    function appendImage(url) {
-      const img = document.createElement('img');
-      img.src = url;
-      document.getElementById('gallery').appendChild(img);
-    }
-
-    // 🔄 Real-time Firestore listener
-    db.collection("images")
-      .where("approved", "==", false)
-      .onSnapshot(snapshot => {
-        document.getElementById('gallery').innerHTML = '';
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          appendImage(data.imageUrl);
-        });
-      });
-  </script>
 </body>
 </html>
