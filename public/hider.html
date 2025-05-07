@@ -253,7 +253,7 @@
 
       <div class="popup-container">
         <h2>You've been found!</h2>
-        <p>Enter your name to get credit:</p>
+        <p>Please enter your player number:</p>
         <input type="text" id="finder-name" placeholder="Your name" />
         <div class="popup-buttons">
           <button id="submit-name">Submit</button>
@@ -300,25 +300,44 @@
   });
 
   submitBtn.addEventListener('click', async () => {
-    const name = nameInput.value.trim();
-    if (!name) return alert("Please enter a name.");
+  const name = nameInput.value.trim();
+  if (!name) return alert("Please enter your player number.");
 
-    try {
-      // Check if name exists
-      const querySnapshot = await db.collection('hiders').where('name', '==', name).get();
+  try {
+    const hidersRef = db.collection('hiders');
+    const existing = await hidersRef.where('name', '==', name).get();
 
-      if (querySnapshot.empty) {
-        await db.collection('hiders').add({ name });
-      } else {
-        alert(`${name}, you have already been found, please return to home base.`);
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong. Try again.");
+    if (!existing.empty) {
+      alert(`Player ${name}, you have already been found. Please return to home base.`);
+      popup.style.display = 'none';
+      return;
     }
 
+    // Add the new hider
+    await hidersRef.add({ name });
+
+    // Increment hidersFound in meta/status
+    const metaRef = db.collection('meta').doc('status');
+    await db.runTransaction(async (transaction) => {
+      const metaDoc = await transaction.get(metaRef);
+      if (!metaDoc.exists) {
+        transaction.set(metaRef, { hidersFound: 1 });
+      } else {
+        const current = metaDoc.data().hidersFound || 0;
+        transaction.update(metaRef, { hidersFound: current + 1 });
+      }
+    });
+
+    // Hide popup and redirect
     popup.style.display = 'none';
-  });
+    window.location.href = "/endgame.html";
+
+  } catch (err) {
+    console.error(err);
+    alert("Something went wrong. Please try again.");
+  }
+});
+
 
   // 🔁 Handle all file inputs
   document.querySelectorAll('input[type="file"]').forEach(input => {
@@ -354,8 +373,7 @@
 
         const imageUrl = data.imageUrl;
 
-        // Store metadata in Firestore
-        await db.collection('images').add({
+        await db.collection('images').doc(category).set({
           imageUrl: imageUrl,
           category: category,
           found: false,
