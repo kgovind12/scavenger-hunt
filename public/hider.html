@@ -404,9 +404,10 @@
 
         successMsg.innerText = "Uploaded & saved!";
       } catch (err) {
-        console.error(err);
-        successMsg.innerText = "Upload failed.";
-        successMsg.style.color = 'red';
+          console.error(err);
+          successMsg.innerText = "Upload failed!";
+          alert(err.message);
+          successMsg.style.color = 'red';
       }
     });
   });
