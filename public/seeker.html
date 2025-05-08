@@ -232,7 +232,15 @@
     function openSMS() {
       const phoneNumber = "+19253362076";
       const message = "I need help!";
-      window.location.href = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
+      const smsUrl = `sms:${phoneNumber}&body=${encodeURIComponent(message)}`;
+
+      // iPhone-compatible fallback
+      if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        window.location.href = `sms:${phoneNumber};?&body=${encodeURIComponent(message)}`;
+      } else {
+        window.location.href = smsUrl;
+      }
+      // window.location.href = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
     }
   </script>
 </body>
