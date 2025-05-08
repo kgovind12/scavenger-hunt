@@ -456,7 +456,22 @@
       }
     });
 
-    // Show rejection message for unapproved images
+      // Show pending approval message for unapproved images
+      db.collection('images').where('found', '==', true).where('approved', '==', false).where('rejected', '==', false).onSnapshot(snapshot => {
+      snapshot.docChanges().forEach(change => {
+        if (change.type === "added" || change.type === "modified") {
+          const data = change.doc.data();
+          const section = document.querySelector(`.category-section[data-category="${data.category}"]`);
+          if (section) {
+            const msg = section.querySelector('.success-message');
+            msg.innerText = "Pending approval";
+            msg.style.color = 'green';
+          }
+        }
+      });
+    });
+
+    // Show rejection message for rejected images
     db.collection('images').where('rejected', '==', true).onSnapshot(snapshot => {
       snapshot.docChanges().forEach(change => {
         if (change.type === "added" || change.type === "modified") {
