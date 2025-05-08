@@ -41,6 +41,8 @@
       margin-bottom: 20px;
       box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
       border-left: 5px solid royalblue;
+      display: flex;
+      flex-direction: column;
     }
 
     .category-section h3 {
@@ -144,6 +146,16 @@
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
+    }
+
+    #all-items-ok {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
     }
 
   </style>
@@ -262,9 +274,19 @@
       </div>
     </div>
 
-  <!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <!-- All Items Found Popup -->
+    <div id="all-items-popup" class="popup-overlay" style="display: none;">
+      <div class="popup-backdrop"></div>
+      <div class="popup-container">
+        <h2>🎉 Congratulations!</h2>
+        <p>You have found all the hidden items! Please return to the home base.</p>
+        <button id="all-items-ok">OK</button>
+      </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
   <script>
       // Your web app's Firebase configuration
@@ -411,6 +433,40 @@
       }
     });
   });
+
+    // List of all required categories
+    const allCategories = [
+      "red", "leaf", "circle", "toy", "reflection",
+      "soft", "triangle", "old", "funny", "tall"
+    ];
+
+    const allItemsPopup = document.getElementById("all-items-popup");
+    const allItemsOkButton = document.getElementById("all-items-ok");
+
+    // To track which categories have approved images
+    let approvedCategories = new Set();
+
+    // Recheck whenever Firestore changes
+    db.collection('images').where('approved', '==', true).onSnapshot(snapshot => {
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        if (data.category && allCategories.includes(data.category)) {
+          approvedCategories.add(data.category);
+        }
+      });
+
+      // If all categories are approved, show popup
+      if (approvedCategories.size === allCategories.length) {
+        allItemsPopup.style.display = 'block';
+      }
+    });
+
+    // Handle OK button to return to home page
+    allItemsOkButton.addEventListener('click', () => {
+      allItemsPopup.style.display = 'none';
+      window.location.href = '/';
+    });
+
   </script>
 </body>
 </html>

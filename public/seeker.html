@@ -56,7 +56,60 @@
         -webkit-mask-repeat: no-repeat;
         box-shadow: 0 0 10px #0051ba80;
         border: 2px solid #0051ba;
-        filter: saturate(50%) invert(86%) sepia(588%) saturate(1357%) hue-rotate(203deg) brightness(100%) contrast(96%)    }
+        filter: saturate(50%) invert(86%) sepia(588%) saturate(1357%) hue-rotate(203deg) brightness(100%) contrast(96%)
+      }
+
+      /* Popup Styling */
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .popup-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .popup-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 30px 25px;
+      border-radius: 16px;
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+      width: 300px;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      z-index: 1000;
+    }
+
+    .popup-container h2 {
+      margin-top: 0;
+      font-size: 22px;
+      color: #28a745;
+    }
+
+    .popup-container p {
+      font-size: 14px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    #completion-ok {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
   </style>
 </head>
 <body>
@@ -74,6 +127,26 @@
     <div class="icon"></div>
     <div class="icon"></div>
   </div>
+
+    <!-- Success Popup -->
+    <div id="completion-popup" class="popup-overlay" style="display: none;">
+      <div class="popup-backdrop"></div>
+      <div class="popup-container">
+        <h2>🎉 Congratulations!</h2>
+        <p>You have found all the hiders! Please return to home base.</p>
+        <button id="completion-ok">OK</button>
+      </div>
+    </div>
+
+    <!-- Game Lost Popup -->
+    <div id="game-lost-popup" class="popup-overlay" style="display: none;">
+      <div class="popup-backdrop"></div>
+      <div class="popup-container">
+        <h2>💀 Game Over</h2>
+        <p>The hiders have won! Please return to home base.</p>
+        <button id="lost-ok" style="background-color: red; color: white; padding: 10px 18px; border: none; border-radius: 8px; font-weight: bold;">OK</button>
+      </div>
+    </div>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -102,6 +175,9 @@
       if (doc.exists) {
         const hidersFound = doc.data().hidersFound;
         updateIcons(hidersFound);
+        if (hidersFound === TOTAL_HIDERS && TOTAL_HIDERS > 0) {
+          document.getElementById('completion-popup').style.display = 'block';
+        }
       }
     });
 
@@ -115,6 +191,25 @@
         }
       });
     }
+
+    // Button click to redirect
+    document.getElementById('completion-ok').addEventListener('click', () => {
+      window.location.href = '/';
+    });
+
+    const lostPopup = document.getElementById('game-lost-popup');
+    const lostOkBtn = document.getElementById('lost-ok');
+
+    db.collection('meta').doc('status').onSnapshot((doc) => {
+      if (doc.exists && doc.data().seekersLost === true) {
+        lostPopup.style.display = 'block';
+      }
+    });
+
+    lostOkBtn.addEventListener('click', () => {
+      lostPopup.style.display = 'none';
+      window.location.href = '/';
+    });
   </script>
 </body>
 </html>
