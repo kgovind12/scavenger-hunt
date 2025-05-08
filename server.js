@@ -42,6 +42,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
     });
 
     const result = await imgurResponse.json();
+    const rawText = await imgurResponse.text();
 
     if (!result.success) {
       return res.status(500).json({ error: 'Imgur upload failed' });
@@ -52,7 +53,8 @@ app.post('/upload', upload.single('image'), async (req, res) => {
     console.error(err);
     res.status(500).json({ 
       error: 'Upload failed', 
-      details: err.message || String(err) 
+      details: err.message || String(err),
+      rawText: rawText || 'No raw text available' 
     });
   }
 });
