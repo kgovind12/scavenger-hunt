@@ -488,10 +488,6 @@
             const msg = section.querySelector('.success-message');
             msg.innerText = "Rejected. Please upload new image.";
             msg.style.color = 'red';
-
-            // Optionally, clear the preview image
-            const preview = section.querySelector('.upload-preview');
-            if (preview) preview.src = '';
           }
         }
       });
