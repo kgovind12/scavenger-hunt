@@ -513,21 +513,26 @@
       window.location.href = '/';
     });
 
-    // Open SMS app on button click
+    // help button
     function openSMS() {
       const phoneNumber = "+19253362076";
       const message = "I need help!";
-      const smsUrl = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
+      const encodedMessage = encodeURIComponent(message);
 
-      // iPhone-compatible fallback
-      if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        window.location.href = `sms:${phoneNumber};?body=${encodeURIComponent(message)}`;
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+      // Use ?body= on iOS, &body= on Android — but fallback to just ?body= is often safer
+      let smsUrl;
+
+      if (isIOS) {
+        smsUrl = `sms:${phoneNumber}&body=${encodedMessage}`;
+        // iOS often requires just `sms:<number>&body=` without the semicolon or question mark
       } else {
-        // Android or other platforms
-        window.location.href = smsUrl;
+        smsUrl = `sms:${phoneNumber}?body=${encodedMessage}`;
       }
+      window.location.href = smsUrl;
     }
-    
+
   </script>
 </body>
 </html>
