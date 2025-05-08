@@ -50,7 +50,10 @@ app.post('/upload', upload.single('image'), async (req, res) => {
     res.json({ imageUrl: result.data.link });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Upload failed' });
+    res.status(500).json({ 
+      error: 'Upload failed', 
+      details: err.message || String(err) 
+    });
   }
 });
 

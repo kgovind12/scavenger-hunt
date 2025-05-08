@@ -391,7 +391,7 @@
         });
 
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Upload failed');
+        if (!response.ok) throw new Error(data.details || 'Upload failed');
 
         const imageUrl = data.imageUrl;
 
@@ -406,7 +406,7 @@
       } catch (err) {
           console.error(err);
           successMsg.innerText = "Upload failed!";
-          alert(err.message);
+          alert(err);
           successMsg.style.color = 'red';
       }
     });
