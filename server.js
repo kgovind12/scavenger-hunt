@@ -29,6 +29,8 @@ const db = admin.firestore();
 app.post('/upload', upload.single('image'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
+  console.log('IMGUR_CLIENT_ID:', process.env.IMGUR_CLIENT_ID);
+
   try {
     const imgurResponse = await fetch('https://api.imgur.com/3/image', {
       method: 'POST',
