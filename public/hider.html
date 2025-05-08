@@ -337,43 +337,45 @@
   });
 
   submitBtn.addEventListener('click', async () => {
-  const name = nameInput.value.trim();
-  if (!name) return alert("Please enter your player number.");
+    const name = nameInput.value.trim();
+    if (!name) return alert("Please enter your player number.");
 
-  try {
-    const hidersRef = db.collection('hiders');
-    const existing = await hidersRef.where('name', '==', name).get();
+    submitBtn.disabled = true;
 
-    if (!existing.empty) {
-      alert(`Player ${name}, you have already been found. Please return to home base.`);
-      popup.style.display = 'none';
-      return;
-    }
+    try {
+      const hiderRef = db.collection('hiders').doc(name);
+      const doc = await hiderRef.get();
 
-    // Add the new hider
-    await hidersRef.add({ name });
-
-    // Increment hidersFound in meta/status
-    const metaRef = db.collection('meta').doc('status');
-    await db.runTransaction(async (transaction) => {
-      const metaDoc = await transaction.get(metaRef);
-      if (!metaDoc.exists) {
-        transaction.set(metaRef, { hidersFound: 1 });
-      } else {
-        const current = metaDoc.data().hidersFound || 0;
-        transaction.update(metaRef, { hidersFound: current + 1 });
+      if (doc.exists) {
+        alert(`Player ${name}, you have already been found. Please return to home base.`);
+        popup.style.display = 'none';
+        return;
       }
-    });
 
-    // Hide popup and redirect
-    popup.style.display = 'none';
-    window.location.href = "/endgame.html";
+      // Create the hider with name as the doc ID
+      await hiderRef.set({ name });
 
-  } catch (err) {
-    console.error(err);
-    alert("Something went wrong. Please try again.");
-  }
-});
+      // Increment hidersFound in meta/status
+      const metaRef = db.collection('meta').doc('status');
+      await db.runTransaction(async (transaction) => {
+        const metaDoc = await transaction.get(metaRef);
+        if (!metaDoc.exists) {
+          transaction.set(metaRef, { hidersFound: 1 });
+        } else {
+          const current = metaDoc.data().hidersFound || 0;
+          transaction.update(metaRef, { hidersFound: current + 1 });
+        }
+      });
+
+      popup.style.display = 'none';
+      window.location.href = "/endgame.html";
+
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong. Please try again.");
+      submitBtn.disabled = false;
+    }
+  });
 
 
   // 🔁 Handle all file inputs
