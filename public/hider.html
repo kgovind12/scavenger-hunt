@@ -391,7 +391,7 @@
         });
 
         const data = await response.json();
-        if (!response.ok) throw new Error(data.rawText || 'Upload failed');
+        if (!response.ok) throw new Error(data.raw || 'Upload failed');
 
         const imageUrl = data.imageUrl;
 
