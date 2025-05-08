@@ -34,6 +34,20 @@
       box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
     }
 
+    #help-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background-color: #ff2700;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 15px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    }
+
     .category-section {
       background-color: white;
       border-radius: 12px;
@@ -163,6 +177,7 @@
 <body>
 
   <button id="found-button">I've been found!</button>
+  <button id="help-button" onclick="openSMS()">Help</button>
 
   <header>Welcome Ikea Hiders, upload pictures of your items here!</header>
 
@@ -467,6 +482,13 @@
       allItemsPopup.style.display = 'none';
       window.location.href = '/';
     });
+
+    // Open SMS app on button click
+    function openSMS() {
+      const phoneNumber = "+19253362076";
+      const message = "I need help!";
+      window.location.href = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
+    }
 
   </script>
 </body>

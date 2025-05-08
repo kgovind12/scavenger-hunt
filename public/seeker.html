@@ -21,6 +21,7 @@
       background-color: #fff3a5;
       text-align: center;
       height: 100vh;
+      padding-top: 100px;
     }
 
     h1 {
@@ -110,9 +111,25 @@
       cursor: pointer;
     }
 
+    #help-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background-color: #ff2700;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 15px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    }
+
   </style>
 </head>
 <body>
+  <button id="help-button" onclick="openSMS()">Help</button>
+
   <h1>Hiders Found</h1>
 
   <div class="icon-container">
@@ -210,6 +227,13 @@
       lostPopup.style.display = 'none';
       window.location.href = '/';
     });
+
+    // Open SMS app on button click
+    function openSMS() {
+      const phoneNumber = "+19253362076";
+      const message = "I need help!";
+      window.location.href = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
+    }
   </script>
 </body>
 </html>
