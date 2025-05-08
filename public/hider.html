@@ -414,39 +414,17 @@
           imageUrl: imageUrl,
           category: category,
           found: true,
-          approved: true,
+          approved: false,
+          rejected: false
         });
 
-        successMsg.innerText = "Uploaded & saved!";
+        successMsg.innerText = "Pending approval";
         successMsg.style.color = 'green';
       } catch (err) {
           console.error(err);
           successMsg.innerText = "Upload failed!";
           alert(err);
           successMsg.style.color = 'red';
-      }
-    });
-  });
-
-  function updateCategoryImage(doc) {
-    const data = doc.data();
-    const { imageUrl, category } = data;
-
-    // Find the matching section
-    const section = document.querySelector(`.category-section[data-category="${category}"]`);
-    if (section) {
-      const preview = section.querySelector('.upload-preview');
-      const msg = section.querySelector('.success-message');
-      preview.src = imageUrl;
-      msg.innerText = "Approved!";
-    }
-  }
-
-  // Real-time listener
-  db.collection('images').where('found', '==', true).onSnapshot(snapshot => {
-    snapshot.docChanges().forEach(change => {
-      if (change.type === "added" || change.type === "modified") {
-        updateCategoryImage(change.doc);
       }
     });
   });
@@ -464,7 +442,7 @@
     let approvedCategories = new Set();
 
     // Recheck whenever Firestore changes
-    db.collection('images').where('found', '==', true).onSnapshot(snapshot => {
+    db.collection('images').where('approved', '==', true).onSnapshot(snapshot => {
       snapshot.forEach(doc => {
         const data = doc.data();
         if (data.category && allCategories.includes(data.category)) {
@@ -479,7 +457,7 @@
     });
 
     // Show rejection message for unapproved images
-    db.collection('images').where('approved', '==', false).onSnapshot(snapshot => {
+    db.collection('images').where('rejected', '==', true).onSnapshot(snapshot => {
       snapshot.docChanges().forEach(change => {
         if (change.type === "added" || change.type === "modified") {
           const data = change.doc.data();
@@ -488,6 +466,21 @@
             const msg = section.querySelector('.success-message');
             msg.innerText = "Rejected. Please upload new image.";
             msg.style.color = 'red';
+          }
+        }
+      });
+    });
+
+    // Show approved message for approved images
+    db.collection('images').where('approved', '==', true).onSnapshot(snapshot => {
+      snapshot.docChanges().forEach(change => {
+        if (change.type === "added" || change.type === "modified") {
+          const data = change.doc.data();
+          const section = document.querySelector(`.category-section[data-category="${data.category}"]`);
+          if (section) {
+            const msg = section.querySelector('.success-message');
+            msg.innerText = "Approved!";
+            msg.style.color = 'green';
           }
         }
       });
