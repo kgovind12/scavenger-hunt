@@ -438,67 +438,71 @@
     const allItemsPopup = document.getElementById("all-items-popup");
     const allItemsOkButton = document.getElementById("all-items-ok");
 
-    // To track which categories have approved images
-    let approvedCategories = new Set();
-
-    // Recheck whenever Firestore changes
-    db.collection('images').where('approved', '==', true).onSnapshot(snapshot => {
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        if (data.category && allCategories.includes(data.category)) {
-          approvedCategories.add(data.category);
-        }
-      });
-
-      // If all categories are approved, show popup
-      if (approvedCategories.size === allCategories.length) {
-        allItemsPopup.style.display = 'block';
-      }
+    // pending approval listener
+    db.collection('images')
+      .where('found', '==', true)
+      .where('approved', '==', false)
+      .where('rejected', '==', false)
+      .onSnapshot(snapshot => {
+        snapshot.docChanges().forEach(change => {
+          if (change.type === "added" || change.type === "modified") {
+            const data = change.doc.data();
+            const section = document.querySelector(`.category-section[data-category="${data.category}"]`);
+            if (section) {
+              const msg = section.querySelector('.success-message');
+              const preview = section.querySelector('.upload-preview');
+              msg.innerText = "Pending approval";
+              msg.style.color = 'green';
+              if (data.imageUrl) preview.src = data.imageUrl;
+            }
+          }
+        });
     });
 
-      // Show pending approval message for unapproved images
-      db.collection('images').where('found', '==', true).where('approved', '==', false).where('rejected', '==', false).onSnapshot(snapshot => {
-      snapshot.docChanges().forEach(change => {
-        if (change.type === "added" || change.type === "modified") {
-          const data = change.doc.data();
-          const section = document.querySelector(`.category-section[data-category="${data.category}"]`);
-          if (section) {
-            const msg = section.querySelector('.success-message');
-            msg.innerText = "Pending approval";
-            msg.style.color = 'green';
+    // rejected listener
+    db.collection('images')
+      .where('rejected', '==', true)
+      .onSnapshot(snapshot => {
+        snapshot.docChanges().forEach(change => {
+          if (change.type === "added" || change.type === "modified") {
+            const data = change.doc.data();
+            const section = document.querySelector(`.category-section[data-category="${data.category}"]`);
+            if (section) {
+              const msg = section.querySelector('.success-message');
+              const preview = section.querySelector('.upload-preview');
+              msg.innerText = "Rejected. Please upload new image.";
+              msg.style.color = 'red';
+              if (data.imageUrl) preview.src = data.imageUrl;
+            }
           }
-        }
-      });
+        });
     });
 
-    // Show rejection message for rejected images
-    db.collection('images').where('rejected', '==', true).onSnapshot(snapshot => {
-      snapshot.docChanges().forEach(change => {
-        if (change.type === "added" || change.type === "modified") {
-          const data = change.doc.data();
-          const section = document.querySelector(`.category-section[data-category="${data.category}"]`);
-          if (section) {
-            const msg = section.querySelector('.success-message');
-            msg.innerText = "Rejected. Please upload new image.";
-            msg.style.color = 'red';
-          }
-        }
-      });
-    });
+    // Approved listener
+    const approvedCategories = new Set();
 
-    // Show approved message for approved images
-    db.collection('images').where('approved', '==', true).onSnapshot(snapshot => {
-      snapshot.docChanges().forEach(change => {
-        if (change.type === "added" || change.type === "modified") {
-          const data = change.doc.data();
-          const section = document.querySelector(`.category-section[data-category="${data.category}"]`);
-          if (section) {
-            const msg = section.querySelector('.success-message');
-            msg.innerText = "Approved!";
-            msg.style.color = 'green';
+    db.collection('images')
+      .where('approved', '==', true)
+      .onSnapshot(snapshot => {
+        approvedCategories.clear();
+        snapshot.forEach(doc => {
+          const { category, imageUrl } = doc.data();
+          if (allCategories.includes(category)) {
+            approvedCategories.add(category);
+            const section = document.querySelector(`.category-section[data-category="${category}"]`);
+            if (section) {
+              const msg = section.querySelector('.success-message');
+              const preview = section.querySelector('.upload-preview');
+              msg.innerText = "Approved!";
+              msg.style.color = 'green';
+              if (imageUrl) preview.src = imageUrl;
+            }
           }
+        });
+
+        if (approvedCategories.size === allCategories.length) {
+          allItemsPopup.style.display = 'block';
         }
-      });
     });
 
     // Handle OK button to return to home page
