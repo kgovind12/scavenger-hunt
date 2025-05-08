@@ -413,11 +413,12 @@
         await db.collection('images').doc(category).set({
           imageUrl: imageUrl,
           category: category,
-          found: false,
-          approved: false,
+          found: true,
+          approved: true,
         });
 
         successMsg.innerText = "Uploaded & saved!";
+        successMsg.style.color = 'green';
       } catch (err) {
           console.error(err);
           successMsg.innerText = "Upload failed!";
@@ -442,7 +443,7 @@
   }
 
   // Real-time listener
-  db.collection('images').where('approved', '==', true).onSnapshot(snapshot => {
+  db.collection('images').where('found', '==', true).onSnapshot(snapshot => {
     snapshot.docChanges().forEach(change => {
       if (change.type === "added" || change.type === "modified") {
         updateCategoryImage(change.doc);
@@ -463,7 +464,7 @@
     let approvedCategories = new Set();
 
     // Recheck whenever Firestore changes
-    db.collection('images').where('approved', '==', true).onSnapshot(snapshot => {
+    db.collection('images').where('found', '==', true).onSnapshot(snapshot => {
       snapshot.forEach(doc => {
         const data = doc.data();
         if (data.category && allCategories.includes(data.category)) {
@@ -475,6 +476,25 @@
       if (approvedCategories.size === allCategories.length) {
         allItemsPopup.style.display = 'block';
       }
+    });
+
+    // Show rejection message for unapproved images
+    db.collection('images').where('approved', '==', false).onSnapshot(snapshot => {
+      snapshot.docChanges().forEach(change => {
+        if (change.type === "added" || change.type === "modified") {
+          const data = change.doc.data();
+          const section = document.querySelector(`.category-section[data-category="${data.category}"]`);
+          if (section) {
+            const msg = section.querySelector('.success-message');
+            msg.innerText = "Rejected. Please upload new image.";
+            msg.style.color = 'red';
+
+            // Optionally, clear the preview image
+            const preview = section.querySelector('.upload-preview');
+            if (preview) preview.src = '';
+          }
+        }
+      });
     });
 
     // Handle OK button to return to home page
