@@ -570,6 +570,8 @@
               msg.innerText = "Approved!";
               msg.style.color = 'green';
               if (imageUrl) preview.src = imageUrl;
+              const fileInput = section.querySelector('.upload-box');
+              if (fileInput) fileInput.style.display = 'none';
             }
           }
         });
