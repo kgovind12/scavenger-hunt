@@ -413,6 +413,11 @@
     }
   });
 
+    function optimizeCloudinaryUrl(originalUrl) {
+      if (!originalUrl.includes('/upload/')) return originalUrl;
+      return originalUrl.replace('/upload/', '/upload/q_auto,f_auto,w_600/');
+    }
+
     // 🔁 Handle all file inputs
     document.querySelectorAll('input[type="file"]').forEach(input => {
       input.addEventListener('change', async (e) => {
@@ -527,7 +532,7 @@
               const preview = section.querySelector('.upload-preview');
               msg.innerText = "Pending approval";
               msg.style.color = 'green';
-              if (data.imageUrl) preview.src = data.imageUrl;
+              if (data.imageUrl) preview.src = optimizeCloudinaryUrl(data.imageUrl);
             }
           }
         });
@@ -546,7 +551,7 @@
               const preview = section.querySelector('.upload-preview');
               msg.innerText = "Rejected. Please upload new image.";
               msg.style.color = 'red';
-              if (data.imageUrl) preview.src = data.imageUrl;
+              if (data.imageUrl) preview.src = optimizeCloudinaryUrl(data.imageUrl);
             }
           }
         });
@@ -569,7 +574,7 @@
               const preview = section.querySelector('.upload-preview');
               msg.innerText = "Approved!";
               msg.style.color = 'green';
-              if (imageUrl) preview.src = imageUrl;
+              if (imageUrl) preview.src = optimizeCloudinaryUrl(imageUrl);
               const fileInput = section.querySelector('.upload-box');
               if (fileInput) fileInput.style.display = 'none';
             }
