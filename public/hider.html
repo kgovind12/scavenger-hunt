@@ -413,59 +413,95 @@
     }
   });
 
+    // 🔁 Handle all file inputs
+    document.querySelectorAll('input[type="file"]').forEach(input => {
+      input.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        const section = e.target.closest('.category-section');
+        const preview = section.querySelector('.upload-preview');
+        const successMsg = section.querySelector('.success-message');
+        const category = section.getAttribute('data-category');
 
-  // 🔁 Handle all file inputs
-  document.querySelectorAll('input[type="file"]').forEach(input => {
-    input.addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      const section = e.target.closest('.category-section');
-      const preview = section.querySelector('.upload-preview');
-      const successMsg = section.querySelector('.success-message');
-      const category = section.getAttribute('data-category');
+        if (!file) return;
 
-      if (!file) return;
+        try {
+          const compressedBlob = await compressImage(file, 800, 0.4); // width: 800px, quality: 40%
+          console.log("Compressed blob:", compressedBlob);
 
-      // Preview image
-      const reader = new FileReader();
-      reader.onload = () => {
-        preview.src = reader.result;
-      };
-      reader.readAsDataURL(file);
+          // Preview image
+          const reader = new FileReader();
+          reader.onload = () => {
+            preview.src = reader.result;
+          };
+          reader.readAsDataURL(file);
 
-      // Upload to your Node.js server
-      const formData = new FormData();
-      formData.append('image', file);
-      formData.append('category', category);
+          // Upload to Node.js server
+          const formData = new FormData();
+          formData.append("image", compressedBlob, "compressed.jpg");
+          formData.append('category', category);
 
-      try {
-        const response = await fetch('/upload', {
-          method: 'POST',
-          body: formData,
-        });
+          const response = await fetch('/upload', {
+            method: 'POST',
+            body: formData,
+          });
 
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.raw || 'Upload failed');
+          const text = await response.text();
+          if (!response.ok) {
+            throw new Error("Upload failed: " + text);
+          }
 
-        const imageUrl = data.imageUrl;
+          const data = JSON.parse(text);
+          const imageUrl = data.imageUrl;
 
-        await db.collection('images').doc(category).set({
-          imageUrl: imageUrl,
-          category: category,
-          found: true,
-          approved: false,
-          rejected: false
-        });
+          await db.collection('images').doc(category).set({
+            imageUrl: imageUrl,
+            category: category,
+            found: true,
+            approved: false,
+            rejected: false
+          });
 
-        successMsg.innerText = "Pending approval";
-        successMsg.style.color = 'green';
-      } catch (err) {
+          successMsg.innerText = "Pending approval";
+          successMsg.style.color = 'green';
+
+        } catch (err) {
           console.error(err);
-          successMsg.innerText = "Upload failed!";
           alert(err);
+          successMsg.innerText = "Upload failed!";
           successMsg.style.color = 'red';
-      }
+        }
+      });
     });
-  });
+
+    async function compressImage(file, maxWidth, quality) {
+      const image = new Image();
+      const reader = new FileReader();
+
+      return new Promise((resolve, reject) => {
+        reader.onload = () => {
+          image.src = reader.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+
+        image.onload = () => {
+          const canvas = document.createElement("canvas");
+          const scale = maxWidth / image.width;
+          const width = Math.min(image.width, maxWidth);
+          const height = image.height * scale;
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(image, 0, 0, width, height);
+          canvas.toBlob((blob) => {
+            resolve(blob);
+          }, "image/jpeg", quality);
+        };
+        image.onerror = reject;
+      });
+    }
 
     // List of all required categories
     const allCategories = [

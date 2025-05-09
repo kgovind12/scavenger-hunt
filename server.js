@@ -19,7 +19,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// 📦 Setup Cloudinary Storage for Multer
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
@@ -28,7 +27,16 @@ const storage = new CloudinaryStorage({
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (file.fieldname === 'image') {
+      cb(null, true);
+    } else {
+      cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE', file.fieldname));
+    }
+  }
+});
 
 // 🔐 Initialize Firebase Admin
 const admin = require('firebase-admin');
@@ -48,7 +56,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 
   try {
     console.log('Uploaded to Cloudinary:', req.file.path);
-    res.json({ imageUrl: req.file.path }); // Cloudinary adds the URL to `path`
+    res.json({ imageUrl: req.file.path });
   } catch (err) {
     console.error(err);
     res.status(500).json({
@@ -65,7 +73,7 @@ app.get('/status', async (req, res) => {
     if (statusDoc.exists) {
       res.json({ hidersRemaining: statusDoc.data().hidersRemaining });
     } else {
-      res.json({ hidersRemaining: 10 }); // Default fallback
+      res.json({ hidersRemaining: 10 });
     }
   } catch (err) {
     console.error(err);
