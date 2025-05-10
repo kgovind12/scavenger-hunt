@@ -226,19 +226,82 @@
 
   <form id="uploadForm">
     <!-- Repeatable category block -->
-    <div class="category-section" data-category="malm">
-      <h3>Malm</h3>
+    <div class="category-section" data-category="upplyst">
+      <h3>Upplyst</h3>
       <div class="upload-box">
-        <input type="file" name="malm" accept="image/*" capture="camera" />
+        <input type="file" name="upplyst" accept="image/*" capture="camera" />
       </div>
       <img class="upload-preview" />
       <div class="success-message"></div>
     </div>
 
-    <div class="category-section" data-category="pax">
-      <h3>Pax</h3>
+    <div class="category-section" data-category="havsten">
+      <h3>Havsten</h3>
       <div class="upload-box">
-        <input type="file" name="pax" accept="image/*" capture="camera" />
+        <input type="file" name="havsten" accept="image/*" capture="camera" />
+      </div>
+      <img class="upload-preview" />
+      <div class="success-message"></div>
+    </div>
+
+    <div class="category-section" data-category="skadis">
+      <h3>Skadis</h3>
+      <div class="upload-box">
+        <input type="file" name="skadis" accept="image/*" capture="camera" />
+      </div>
+      <img class="upload-preview" />
+      <div class="success-message"></div>
+    </div>
+
+    <div class="category-section" data-category="strandmon">
+      <h3>Strandmon</h3>
+      <div class="upload-box">
+        <input type="file" name="strandmon" accept="image/*" capture="camera" />
+      </div>
+      <img class="upload-preview" />
+      <div class="success-message"></div>
+    </div>
+
+    <div class="category-section" data-category="misterhult">
+      <h3>Misterhult</h3>
+      <div class="upload-box">
+        <input type="file" name="misterhult" accept="image/*" capture="camera" />
+      </div>
+      <img class="upload-preview" />
+      <div class="success-message"></div>
+    </div>
+
+    <div class="category-section" data-category="kramig">
+      <h3>Kramig</h3>
+      <div class="upload-box">
+        <input type="file" name="kramig" accept="image/*" capture="camera" />
+      </div>
+      <img class="upload-preview" />
+      <div class="success-message"></div>
+    </div>
+
+    <div class="category-section" data-category="piltandvinge">
+      <h3>Piltandvinge</h3>
+      <div class="upload-box">
+        <input type="file" name="piltandvinge" accept="image/*" capture="camera" />
+      </div>
+      <img class="upload-preview" />
+      <div class="success-message"></div>
+    </div>
+
+    <div class="category-section" data-category="drommare">
+      <h3>Drommare</h3>
+      <div class="upload-box">
+        <input type="file" name="drommare" accept="image/*" capture="camera" />
+      </div>
+      <img class="upload-preview" />
+      <div class="success-message"></div>
+    </div>
+
+    <div class="category-section" data-category="stoense">
+      <h3>Stoense</h3>
+      <div class="upload-box">
+        <input type="file" name="stoense" accept="image/*" capture="camera" />
       </div>
       <img class="upload-preview" />
       <div class="success-message"></div>
@@ -257,60 +320,6 @@
       <h3>Sparka</h3>
       <div class="upload-box">
         <input type="file" name="sparka" accept="image/*" capture="camera" />
-      </div>
-      <img class="upload-preview" />
-      <div class="success-message"></div>
-    </div>
-
-    <div class="category-section" data-category="finnala">
-      <h3>Finnala</h3>
-      <div class="upload-box">
-        <input type="file" name="finnala" accept="image/*" capture="camera" />
-      </div>
-      <img class="upload-preview" />
-      <div class="success-message"></div>
-    </div>
-
-    <div class="category-section" data-category="soderhamn">
-      <h3>Soderhamn</h3>
-      <div class="upload-box">
-        <input type="file" name="soderhamn" accept="image/*" capture="camera" />
-      </div>
-      <img class="upload-preview" />
-      <div class="success-message"></div>
-    </div>
-
-    <div class="category-section" data-category="utespelare">
-      <h3>Utespelare</h3>
-      <div class="upload-box">
-        <input type="file" name="utespelare" accept="image/*" capture="camera" />
-      </div>
-      <img class="upload-preview" />
-      <div class="success-message"></div>
-    </div>
-
-    <div class="category-section" data-category="bild">
-      <h3>Bild</h3>
-      <div class="upload-box">
-        <input type="file" name="bild" accept="image/*" capture="camera" />
-      </div>
-      <img class="upload-preview" />
-      <div class="success-message"></div>
-    </div>
-
-    <div class="category-section" data-category="stockholm">
-      <h3>Stockholm</h3>
-      <div class="upload-box">
-        <input type="file" name="stockholm" accept="image/*" capture="camera" />
-      </div>
-      <img class="upload-preview" />
-      <div class="success-message"></div>
-    </div>
-
-    <div class="category-section" data-category="lockig">
-      <h3>Lockig</h3>
-      <div class="upload-box">
-        <input type="file" name="lockig" accept="image/*" capture="camera" />
       </div>
       <img class="upload-preview" />
       <div class="success-message"></div>
@@ -552,17 +561,17 @@
     }
 
     // List of all required categories
-    const allCategories = [
-      "malm", "pax", "duktig", "sparka", "finnala",
-      "soderhamn", "utespelare", "bild", "stockholm", "lockig",
-      "pluttis"
-    ];
-
     // const allCategories = [
     //   "malm", "pax", "duktig", "sparka", "finnala",
-    //   "soderhamn", "utespelare", "bild", "stoense", "blavingad",
-    //   "lova", "bagis"
+    //   "soderhamn", "utespelare", "bild", "stockholm", "lockig",
+    //   "pluttis"
     // ];
+
+    const allCategories = [
+      "upplyst", "havsten", "skadis", "strandmon", "misterhult",
+      "kramig", "piltandvinge", "drommare", "stoense", "duktig",
+      "sparka", "pluttis"
+    ];
 
     // const allCategories = [
     //   "fantastisk", "varmblixt", "pyssla", "laktare",
