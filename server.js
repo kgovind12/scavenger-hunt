@@ -7,6 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
+app.use(express.json());
 app.use(express.static('public'));
 
 // 🔧 Setup Cloudinary
@@ -78,6 +79,45 @@ app.get('/status', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Could not fetch status' });
+  }
+});
+
+// ✅ Mark a hider as found using the server-side admin SDK
+app.post('/found', async (req, res) => {
+  const { name } = req.body;
+  if (!name || typeof name !== 'string' || !name.trim()) {
+    return res.status(400).json({ error: 'Player number is required' });
+  }
+
+  const player = name.trim();
+  const hiderRef = db.collection('hiders').doc(player);
+  const metaRef = db.collection('meta').doc('status');
+
+  try {
+    await db.runTransaction(async (transaction) => {
+      const hiderDoc = await transaction.get(hiderRef);
+      if (hiderDoc.exists) {
+        throw { status: 409, message: 'Hider already found' };
+      }
+
+      transaction.set(hiderRef, { name: player });
+
+      const metaDoc = await transaction.get(metaRef);
+      if (!metaDoc.exists) {
+        transaction.set(metaRef, { hidersFound: 1 });
+      } else {
+        const current = metaDoc.data().hidersFound || 0;
+        transaction.update(metaRef, { hidersFound: current + 1 });
+      }
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    if (err && err.status === 409) {
+      return res.status(409).json({ error: err.message });
+    }
+    console.error(err);
+    res.status(500).json({ error: 'Unable to mark hider as found' });
   }
 });
 

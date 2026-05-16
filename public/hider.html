@@ -346,36 +346,30 @@
     loader.style.display = 'inline';
 
     try {
-      const hiderRef = db.collection('hiders').doc(name);
-      const doc = await hiderRef.get();
-
-      if (doc.exists) {
-        alert(`Player ${name}, you have already been found. Please return to home base.`);
-        popup.style.display = 'none';
-        return;
-      }
-
-      // Create the hider with name as the doc ID
-      await hiderRef.set({ name });
-
-      // Increment hidersFound in meta/status
-      const metaRef = db.collection('meta').doc('status');
-      await db.runTransaction(async (transaction) => {
-        const metaDoc = await transaction.get(metaRef);
-        if (!metaDoc.exists) {
-          transaction.set(metaRef, { hidersFound: 1 });
-        } else {
-          const current = metaDoc.data().hidersFound || 0;
-          transaction.update(metaRef, { hidersFound: current + 1 });
-        }
+      const response = await fetch('/found', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name })
       });
+
+      const data = await response.json();
+      if (!response.ok) {
+        if (response.status === 409) {
+          alert(`Player ${name}, you have already been found. Please return to home base.`);
+          popup.style.display = 'none';
+          return;
+        }
+        throw new Error(data.error || 'Unable to report found');
+      }
 
       popup.style.display = 'none';
       window.location.href = "/endgame.html";
 
     } catch (err) {
         console.error(err);
-        alert("Something went wrong. Please try again.");
+        alert(err.message || "Something went wrong. Please try again.");
         submitBtn.disabled = false;
     } finally {
         // Re-enable button and hide loader (only if not redirected)
