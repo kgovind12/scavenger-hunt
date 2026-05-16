@@ -1,5 +1,5 @@
 {
-  "currentRound": 1,
+  "currentRound": 2,
   "rounds": [
     {
       "id": 1,
@@ -10,7 +10,7 @@
     {
       "id": 2,
       "items": ["Fjaderharv", "Tempelfly", "Listerby", "Skadis", "Sanela", "Tidtabell", "Balkarp", "Kura", "Bleckberget", "Molnskikt", "Slanhostmal", "Fejka"],
-      "hidersCount": 10,
+      "hidersCount": 12,
       "password": "frenchfries42"
     },
     {
