@@ -9,13 +9,13 @@
     },
     {
       "id": 2,
-      "items": ["Fjaderharv", "Tempelfly", "Listerby", "Skadis", "Sanela", "Tidtabell", "Balkarp", "Kura", "Bleckberget", "Molnskikt", "Slanhostmal", "Fejka"],
+      "items": ["Fjaderharv", "Tempelfly", "Listerby", "Skadis", "Sanela", "Tidtabell", "Balkarp", "Kura", "Bleckberget", "Molnskikt", "Slanhostmal", "Fejka", "Strandmon", "Brogrund"],
       "hidersCount": 12,
       "password": "frenchfries42"
     },
     {
       "id": 3,
-      "items": ["Uppatvind", "Eket", "Strandmon", "Brogrund", "Pjatteryd", "Odleblad", "Akterspring", "Sportslig", "Glittran", "Sundso", "Fantastisk", "Torared"],
+      "items": ["Uppatvind", "Eket", "Pjatteryd", "Odleblad", "Akterspring", "Sportslig", "Glittran", "Sundso", "Fantastisk", "Torared"],
       "hidersCount": 12,
       "password": "squirrelsinmypants"
     },
