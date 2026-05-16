@@ -15,13 +15,13 @@
     },
     {
       "id": 3,
-      "items": ["Uppatvind", "Eket", "Pjatteryd", "Odleblad", "Akterspring", "Sportslig", "Glittran", "Sundso", "Fantastisk", "Torared", "Smarra", "Klarbar", "Krylbo", "Zebrasav", "Kallarhals", "Rosentorp"],
+      "items": ["Uppatvind", "Eket", "Pjatteryd", "Odleblad", "Akterspring", "Sportslig", "Glittran", "Sundso", "Fantastisk", "Torared", "Smarra", "Klarbar", "Krylbo", "Zebrasav"],
       "hidersCount": 12,
       "password": "squirrelsinmypants"
     },
     {
       "id": 4,
-      "items": ["Vallkrassing", "Sambord", "Simrishamn", "Varmblixt", "Rodflik", "Gansjon", "Tvamastad", "Agam", "Saluding", "Backnate"],
+      "items": ["Vallkrassing", "Sambord", "Simrishamn", "Varmblixt", "Rodflik", "Gansjon", "Tvamastad", "Kallarhals", "Rosentorp", "Agam", "Saluding", "Backnate"],
       "hidersCount": 12,
       "password": "stanford27"
     },
