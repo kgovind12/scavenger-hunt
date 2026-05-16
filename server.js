@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
+const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
@@ -41,8 +42,32 @@ const upload = multer({
 
 // 🔐 Initialize Firebase Admin
 const admin = require('firebase-admin');
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+
+let serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT;
+if (!serviceAccountRaw && process.env.FIREBASE_SERVICE_ACCOUNT_PATH) {
+  try {
+    serviceAccountRaw = fs.readFileSync(process.env.FIREBASE_SERVICE_ACCOUNT_PATH, 'utf8');
+  } catch (err) {
+    console.error('Unable to read FIREBASE_SERVICE_ACCOUNT_PATH:', err.message);
+  }
+}
+
+if (!serviceAccountRaw) {
+  console.error('FIREBASE_SERVICE_ACCOUNT environment variable is required to initialize Firebase Admin');
+  process.exit(1);
+}
+
+let serviceAccount;
+try {
+  serviceAccount = JSON.parse(serviceAccountRaw);
+} catch (err) {
+  console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT JSON:', err.message);
+  process.exit(1);
+}
+
+if (serviceAccount.private_key) {
+  serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+}
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -95,14 +120,18 @@ app.post('/found', async (req, res) => {
 
   try {
     await db.runTransaction(async (transaction) => {
+      // PHASE 1: Read all documents first
       const hiderDoc = await transaction.get(hiderRef);
+      const metaDoc = await transaction.get(metaRef);
+
+      // PHASE 2: Check conditions
       if (hiderDoc.exists) {
         throw { status: 409, message: 'Hider already found' };
       }
 
+      // PHASE 3: All writes
       transaction.set(hiderRef, { name: player });
 
-      const metaDoc = await transaction.get(metaRef);
       if (!metaDoc.exists) {
         transaction.set(metaRef, { hidersFound: 1 });
       } else {
@@ -116,8 +145,23 @@ app.post('/found', async (req, res) => {
     if (err && err.status === 409) {
       return res.status(409).json({ error: err.message });
     }
-    console.error(err);
-    res.status(500).json({ error: 'Unable to mark hider as found' });
+
+    const errorPayload = {
+      message: err && err.message ? err.message : 'Unknown error',
+      name: err && err.name,
+      code: err && err.code,
+      status: err && err.status,
+      stack: err && err.stack,
+      details: err && err.details,
+      requestBody: req.body,
+      player,
+    };
+
+    console.error('Failed to mark hider as found:');
+    console.error(JSON.stringify(errorPayload, Object.getOwnPropertyNames(err || {}), 2));
+
+    const errorMessage = err && err.message ? err.message : 'Unable to mark hider as found';
+    res.status(500).json({ error: errorMessage });
   }
 });
 
