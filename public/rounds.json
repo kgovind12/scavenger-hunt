@@ -1,5 +1,5 @@
 {
-  "currentRound": 2,
+  "currentRound": 1,
   "rounds": [
     {
       "id": 1,
@@ -33,13 +33,13 @@
     },
     {
       "id": 6,
-      "items": ["Item1", "Item2", "Item3", "Item4", "Item5", "Item6", "Item7", "Item8", "Item9", "Item10", "Item11", "Item12", "Item13"],
+      "items": ["Vattenkrasse", "Gryteryd", "Trofast", "Skallebo", "Malm", "Nymane", "Drona", "Tanum", "Billy", "Drummare"],
       "hidersCount": 13,
       "password": "garlicbreadwins"
     },
     {
       "id": 7,
-      "items": ["Item1", "Item2", "Item3", "Item4", "Item5", "Item6", "Item7", "Item8", "Item9", "Item10", "Item11", "Item12", "Item13"],
+      "items": ["Raffelbjork", "Ploja", "Ostbit", "Slattum", "Silverhajmal", "Rigga", "Hidingsta", "Upphetta", "Skytta", "Racka", "Rodalm"],
       "hidersCount": 13,
       "password": "porcupine84"
     }
