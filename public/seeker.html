@@ -132,18 +132,8 @@
 
   <h1>Hiders Found</h1>
 
-  <div class="icon-container">
-    <div class="icon"></div>
-    <div class="icon"></div>
-    <div class="icon"></div>
-    <div class="icon"></div>
-    <div class="icon"></div>
-    <div class="icon"></div>
-    <div class="icon"></div>
-    <div class="icon"></div>
-    <div class="icon"></div>
-    <div class="icon"></div>
-    <div class="icon"></div>
+  <div class="icon-container" id="icon-container">
+    <!-- Icons generated dynamically -->
   </div>
 
     <!-- Success Popup -->
@@ -171,9 +161,42 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
   <script>
-    const TOTAL_HIDERS = 11;
+    let TOTAL_HIDERS;
+    let currentRound;
 
-    const firebaseConfig = {
+    // Load rounds.json and initialize
+    async function initializeRound() {
+      try {
+        const response = await fetch('/rounds.json');
+        const data = await response.json();
+        currentRound = data.currentRound;
+        
+        // Store in localStorage for persistence
+        localStorage.setItem('currentRound', currentRound);
+        
+        const roundData = data.rounds.find(r => r.id === currentRound);
+        if (!roundData) throw new Error(`Round ${currentRound} not found`);
+        
+        TOTAL_HIDERS = roundData.hidersCount;
+
+        // Generate icons
+        const iconContainer = document.getElementById('icon-container');
+        for (let i = 0; i < TOTAL_HIDERS; i++) {
+          const icon = document.createElement('div');
+          icon.className = 'icon';
+          iconContainer.appendChild(icon);
+        }
+
+        // Initialize Firebase and listeners
+        initializeFirebase();
+      } catch (error) {
+        console.error('Failed to load rounds:', error);
+        alert('Error loading round data');
+      }
+    }
+
+    function initializeFirebase() {
+      const firebaseConfig = {
         apiKey: "AIzaSyC1RdUtKa1cZ0osTSZd93GdcbOS0w54JYU",
         authDomain: "scavenger-hunt-4173c.firebaseapp.com",
         databaseURL: "https://scavenger-hunt-4173c-default-rtdb.firebaseio.com",
@@ -184,50 +207,54 @@
         measurementId: "G-PT9XTPCF1H"
       };
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
 
-    // Listen for changes to hidersFound
-    db.collection('meta').doc('status').onSnapshot(doc => {
-      if (doc.exists) {
-        const hidersFound = doc.data().hidersFound;
-        updateIcons(hidersFound);
-        if (hidersFound === TOTAL_HIDERS && TOTAL_HIDERS > 0) {
-          document.getElementById('completion-popup').style.display = 'block';
+      // Listen for changes to hidersFound
+      db.collection('meta').doc('status').onSnapshot(doc => {
+        if (doc.exists) {
+          const hidersFound = doc.data().hidersFound;
+          updateIcons(hidersFound);
+          if (hidersFound === TOTAL_HIDERS && TOTAL_HIDERS > 0) {
+            document.getElementById('completion-popup').style.display = 'block';
+          }
         }
+      });
+
+      function updateIcons(hidersFound) {
+        const icons = document.querySelectorAll('.icon');
+        icons.forEach((icon, index) => {
+          if (index < hidersFound) {
+            icon.classList.add('found');
+          } else {
+            icon.classList.remove('found');
+          }
+        });
       }
-    });
 
-    function updateIcons(hidersFound) {
-      const icons = document.querySelectorAll('.icon');
-      icons.forEach((icon, index) => {
-        if (index < hidersFound) {
-          icon.classList.add('found');
-        } else {
-          icon.classList.remove('found');
+      // Button click to redirect
+      document.getElementById('completion-ok').addEventListener('click', () => {
+        window.location.href = '/';
+      });
+
+      const lostPopup = document.getElementById('game-lost-popup');
+      const lostOkBtn = document.getElementById('lost-ok');
+
+      db.collection('meta').doc('status').onSnapshot((doc) => {
+        if (doc.exists && doc.data().seekersLost === true) {
+          lostPopup.style.display = 'block';
         }
+      });
+
+      lostOkBtn.addEventListener('click', () => {
+        lostPopup.style.display = 'none';
+        window.location.href = '/';
       });
     }
 
-    // Button click to redirect
-    document.getElementById('completion-ok').addEventListener('click', () => {
-      window.location.href = '/';
-    });
-
-    const lostPopup = document.getElementById('game-lost-popup');
-    const lostOkBtn = document.getElementById('lost-ok');
-
-    db.collection('meta').doc('status').onSnapshot((doc) => {
-      if (doc.exists && doc.data().seekersLost === true) {
-        lostPopup.style.display = 'block';
-      }
-    });
-
-    lostOkBtn.addEventListener('click', () => {
-      lostPopup.style.display = 'none';
-      window.location.href = '/';
-    });
+    // Call initializeRound when page loads
+    initializeRound();
 
     // help button
     function openSMS() {

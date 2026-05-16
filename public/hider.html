@@ -224,116 +224,7 @@
 
   <header>Welcome Ikea Hiders, upload pictures of your items here!</header>
 
-  <form id="uploadForm">
-    <!-- Repeatable category block -->
-    <div class="category-section" data-category="upplyst">
-      <h3>Upplyst</h3>
-      <div class="upload-box">
-        <input type="file" name="upplyst" accept="image/*" capture="camera" />
-      </div>
-      <img class="upload-preview" />
-      <div class="success-message"></div>
-    </div>
-
-    <div class="category-section" data-category="havsten">
-      <h3>Havsten</h3>
-      <div class="upload-box">
-        <input type="file" name="havsten" accept="image/*" capture="camera" />
-      </div>
-      <img class="upload-preview" />
-      <div class="success-message"></div>
-    </div>
-
-    <div class="category-section" data-category="skadis">
-      <h3>Skadis</h3>
-      <div class="upload-box">
-        <input type="file" name="skadis" accept="image/*" capture="camera" />
-      </div>
-      <img class="upload-preview" />
-      <div class="success-message"></div>
-    </div>
-
-    <div class="category-section" data-category="strandmon">
-      <h3>Strandmon</h3>
-      <div class="upload-box">
-        <input type="file" name="strandmon" accept="image/*" capture="camera" />
-      </div>
-      <img class="upload-preview" />
-      <div class="success-message"></div>
-    </div>
-
-    <div class="category-section" data-category="misterhult">
-      <h3>Misterhult</h3>
-      <div class="upload-box">
-        <input type="file" name="misterhult" accept="image/*" capture="camera" />
-      </div>
-      <img class="upload-preview" />
-      <div class="success-message"></div>
-    </div>
-
-    <div class="category-section" data-category="kramig">
-      <h3>Kramig</h3>
-      <div class="upload-box">
-        <input type="file" name="kramig" accept="image/*" capture="camera" />
-      </div>
-      <img class="upload-preview" />
-      <div class="success-message"></div>
-    </div>
-
-    <div class="category-section" data-category="piltandvinge">
-      <h3>Piltandvinge</h3>
-      <div class="upload-box">
-        <input type="file" name="piltandvinge" accept="image/*" capture="camera" />
-      </div>
-      <img class="upload-preview" />
-      <div class="success-message"></div>
-    </div>
-
-    <div class="category-section" data-category="drommare">
-      <h3>Drommare</h3>
-      <div class="upload-box">
-        <input type="file" name="drommare" accept="image/*" capture="camera" />
-      </div>
-      <img class="upload-preview" />
-      <div class="success-message"></div>
-    </div>
-
-    <div class="category-section" data-category="stoense">
-      <h3>Stoense</h3>
-      <div class="upload-box">
-        <input type="file" name="stoense" accept="image/*" capture="camera" />
-      </div>
-      <img class="upload-preview" />
-      <div class="success-message"></div>
-    </div>
-
-    <div class="category-section" data-category="duktig">
-      <h3>Duktig</h3>
-      <div class="upload-box">
-        <input type="file" name="duktig" accept="image/*" capture="camera" />
-      </div>
-      <img class="upload-preview" />
-      <div class="success-message"></div>
-    </div>
-
-    <div class="category-section" data-category="sparka">
-      <h3>Sparka</h3>
-      <div class="upload-box">
-        <input type="file" name="sparka" accept="image/*" capture="camera" />
-      </div>
-      <img class="upload-preview" />
-      <div class="success-message"></div>
-    </div>
-
-    <div class="category-section" data-category="pluttis">
-      <h3>Pluttis</h3>
-      <div class="upload-box">
-        <input type="file" name="pluttis" accept="image/*" capture="camera" />
-      </div>
-      <img class="upload-preview" />
-      <div class="success-message"></div>
-    </div>
-  </form>
+  <form id="uploadForm"></form>
 
     <!-- Found Popup -->
     <div id="found-popup" class="popup-overlay" style="display: none;">
@@ -471,7 +362,8 @@
     }
 
     // 🔁 Handle all file inputs
-    document.querySelectorAll('input[type="file"]').forEach(input => {
+    function attachFileListeners() {
+      document.querySelectorAll('input[type="file"]').forEach(input => {
       input.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         const section = e.target.closest('.category-section');
@@ -528,7 +420,8 @@
           successMsg.style.color = 'red';
         }
       });
-    });
+      });
+    }
 
     async function compressImage(file, maxWidth, quality) {
       const image = new Image();
@@ -567,17 +460,53 @@
     //   "pluttis"
     // ];
 
-    const allCategories = [
-      "upplyst", "havsten", "skadis", "strandmon", "misterhult",
-      "kramig", "piltandvinge", "drommare", "stoense", "duktig",
-      "sparka", "pluttis"
-    ];
+    let currentRound;
+    let allCategories;
 
-    // const allCategories = [
-    //   "fantastisk", "varmblixt", "pyssla", "laktare",
-    //   "superkall", "pektolit", "lockig", "oskarshamn", "svartpoppel",
-    //   "fridhult", "froset", "pluttis"
-    // ];
+    // Load rounds.json and initialize
+    async function initializeRound() {
+      try {
+        const response = await fetch('/rounds.json');
+        const data = await response.json();
+        currentRound = data.currentRound;
+        
+        // Store in localStorage for persistence
+        localStorage.setItem('currentRound', currentRound);
+        
+        const roundData = data.rounds.find(r => r.id === currentRound);
+        if (!roundData) throw new Error(`Round ${currentRound} not found`);
+        
+        const items = roundData.items;
+        allCategories = items.map(item => item.toLowerCase());
+
+        // Generate category sections dynamically
+        const uploadForm = document.getElementById('uploadForm');
+        items.forEach(item => {
+          const categoryLower = item.toLowerCase();
+          const section = document.createElement('div');
+          section.className = 'category-section';
+          section.setAttribute('data-category', categoryLower);
+          section.innerHTML = `
+            <h3>${item}</h3>
+            <div class="upload-box">
+              <input type="file" name="${categoryLower}" accept="image/*" capture="camera" />
+            </div>
+            <img class="upload-preview" />
+            <div class="success-message"></div>
+          `;
+          uploadForm.appendChild(section);
+        });
+
+        // Attach file listeners after generating sections
+        attachFileListeners();
+      } catch (error) {
+        console.error('Failed to load rounds:', error);
+        alert('Error loading round data');
+      }
+    }
+
+    // Initialize when page loads
+    initializeRound();
 
     const allItemsPopup = document.getElementById("all-items-popup");
     const allItemsOkButton = document.getElementById("all-items-ok");
