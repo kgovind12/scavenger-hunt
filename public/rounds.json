@@ -1,5 +1,5 @@
 {
-  "currentRound": 2,
+  "currentRound": 3,
   "rounds": [
     {
       "id": 1,
@@ -15,19 +15,19 @@
     },
     {
       "id": 3,
-      "items": ["Uppatvind", "Eket", "Pjatteryd", "Odleblad", "Akterspring", "Sportslig", "Glittran", "Sundso", "Fantastisk", "Torared"],
+      "items": ["Uppatvind", "Eket", "Pjatteryd", "Odleblad", "Akterspring", "Sportslig", "Glittran", "Sundso", "Fantastisk", "Torared", "Smarra", "Klarbar", "Krylbo", "Zebrasav", "Kallarhals", "Rosentorp"],
       "hidersCount": 12,
       "password": "squirrelsinmypants"
     },
     {
       "id": 4,
-      "items": ["Vallkrassing", "Sambord", "Rodflik", "Gansjon", "Tvamastad", "Agam", "Saluding", "Backnate", "Smarra", "Klarbar", "Krylbo", "Zebrasav"],
+      "items": ["Vallkrassing", "Sambord", "Simrishamn", "Varmblixt", "Rodflik", "Gansjon", "Tvamastad", "Agam", "Saluding", "Backnate"],
       "hidersCount": 12,
       "password": "stanford27"
     },
     {
       "id": 5,
-      "items": ["Simrishamn", "Varmblixt", "Skubb", "Kallarhals", "Rosentorp", "Kuggis", "Stigbygel", "Trattkaktus", "Hektar", "Daggkaprifol", "Lanespelare"],
+      "items": ["Skubb", "Kuggis", "Stigbygel", "Trattkaktus", "Hektar", "Daggkaprifol", "Lanespelare"],
       "hidersCount": 12,
       "password": "sandcorn23"
     },
