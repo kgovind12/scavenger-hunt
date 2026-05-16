@@ -4,37 +4,44 @@
     {
       "id": 1,
       "items": ["Skurup", "Mittplan", "Okensand", "Silverparon", "Tjusig", "Fjallarnika", "Vandplats", "Hemnes", "Kopparbjork", "Dyvlinge", "Maristova", "Lapptatel"],
-      "hidersCount": 12
+      "hidersCount": 12,
+      "password": "scavenging67"
     },
     {
       "id": 2,
       "items": ["Fjaderharv", "Tempelfly", "Listerby", "Skadis", "Sanela", "Tidtabell", "Balkarp", "Kura", "Bleckberget", "Molnskikt", "Slanhostmal", "Fejka"],
-      "hidersCount": 12
+      "hidersCount": 12,
+      "password": "frenchfries42"
     },
     {
       "id": 3,
       "items": ["Uppatvind", "Eket", "Strandmon", "Brogrund", "Pjatteryd", "Odleblad", "Akterspring", "Sportslig", "Glittran", "Sundso", "Fantastisk", "Torared"],
-      "hidersCount": 12
+      "hidersCount": 12,
+      "password": "squirrelsinmypants"
     },
     {
       "id": 4,
       "items": ["Vallkrassing", "Sambord", "Rodflik", "Gansjon", "Tvamastad", "Agam", "Saluding", "Backnate", "Smarra", "Klarbar", "Krylbo", "Zebrasav"],
-      "hidersCount": 12
+      "hidersCount": 12,
+      "password": "stanford27"
     },
     {
       "id": 5,
       "items": ["Simrishamn", "Varmblixt", "Skubb", "Kallarhals", "Rosentorp", "Kuggis", "Stigbygel", "Trattkaktus", "Hektar", "Daggkaprifol", "Lanespelare"],
-      "hidersCount": 12
+      "hidersCount": 12,
+      "password": "sandcorn23"
     },
     {
       "id": 6,
       "items": ["Item1", "Item2", "Item3", "Item4", "Item5", "Item6", "Item7", "Item8", "Item9", "Item10", "Item11", "Item12", "Item13"],
-      "hidersCount": 13
+      "hidersCount": 13,
+      "password": "garlicbreadwins"
     },
     {
       "id": 7,
       "items": ["Item1", "Item2", "Item3", "Item4", "Item5", "Item6", "Item7", "Item8", "Item9", "Item10", "Item11", "Item12", "Item13"],
-      "hidersCount": 13
+      "hidersCount": 13,
+      "password": "porcupine84"
     }
   ]
 }

@@ -256,25 +256,53 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
   <script>
-      (function () {
-        const overlay = document.getElementById('screenblock');
-        const allowedPassword = 'cheese55';
+      let currentRound;
+      let currentRoundPassword;
+      let currentRoundConfig;
 
-        const granted = sessionStorage.getItem('hiderAccess');
-        if (granted === 'granted') {
-          overlay.style.display = 'none';
-          return;
+      async function loadRoundConfig() {
+        const response = await fetch('/rounds.json');
+        const data = await response.json();
+        currentRound = data.currentRound;
+        const roundData = data.rounds.find(r => r.id === currentRound);
+        if (!roundData) {
+          throw new Error(`Round ${currentRound} not found`);
         }
+        currentRoundPassword = roundData.password || '';
+        currentRoundConfig = roundData;
+        return roundData;
+      }
 
-        const password = prompt("Enter the password to access this page:");
-        if (password === allowedPassword) {
-          sessionStorage.setItem('hiderAccess', 'granted');
-          overlay.style.display = 'none';
-        } else {
-          alert("Wrong password! Redirecting...");
+      async function checkAccess() {
+        const overlay = document.getElementById('screenblock');
+
+        try {
+          await loadRoundConfig();
+
+          const granted = sessionStorage.getItem('hiderAccess');
+          const grantedRound = sessionStorage.getItem('hiderRound');
+          if (granted === 'granted' && Number(grantedRound) === currentRound) {
+            overlay.style.display = 'none';
+            return;
+          }
+
+          const password = prompt("Enter the password to access this page:");
+          if (password === currentRoundPassword) {
+            sessionStorage.setItem('hiderAccess', 'granted');
+            sessionStorage.setItem('hiderRound', String(currentRound));
+            overlay.style.display = 'none';
+          } else {
+            alert("Wrong password! Redirecting...");
+            window.location.href = '/';
+          }
+        } catch (error) {
+          console.error('Failed to load round config:', error);
+          alert('Could not verify access. Please try again later.');
           window.location.href = '/';
         }
-      })();
+      }
+
+      checkAccess().then(initializeRound);
 
       // Your web app's Firebase configuration
       // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -460,21 +488,16 @@
     //   "pluttis"
     // ];
 
-    let currentRound;
     let allCategories;
 
     // Load rounds.json and initialize
     async function initializeRound() {
       try {
-        const response = await fetch('/rounds.json');
-        const data = await response.json();
-        currentRound = data.currentRound;
+        const roundData = currentRoundConfig || await loadRoundConfig();
+        currentRound = currentRoundConfig ? currentRoundConfig.id : roundData.id;
         
         // Store in localStorage for persistence
         localStorage.setItem('currentRound', currentRound);
-        
-        const roundData = data.rounds.find(r => r.id === currentRound);
-        if (!roundData) throw new Error(`Round ${currentRound} not found`);
         
         const items = roundData.items;
         allCategories = items.map(item => item.toLowerCase());
@@ -504,9 +527,6 @@
         alert('Error loading round data');
       }
     }
-
-    // Initialize when page loads
-    initializeRound();
 
     const allItemsPopup = document.getElementById("all-items-popup");
     const allItemsOkButton = document.getElementById("all-items-ok");
