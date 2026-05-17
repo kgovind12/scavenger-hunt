@@ -165,6 +165,20 @@ app.post('/found', async (req, res) => {
   }
 });
 
+// ✅ Mark game as lost (hiders won) using the server-side admin SDK
+app.post('/game-lost', async (req, res) => {
+  const metaRef = db.collection('meta').doc('status');
+
+  try {
+    await metaRef.set({ seekersLost: true }, { merge: true });
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Failed to set seekersLost:', err);
+    const errorMessage = err && err.message ? err.message : 'Unable to mark game as lost';
+    res.status(500).json({ error: errorMessage });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

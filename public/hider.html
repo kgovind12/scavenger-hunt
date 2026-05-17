@@ -593,7 +593,16 @@
           allItemsPopup.style.display = 'block';
 
           // Mark the game as lost for seekers once all items are approved
-          db.collection('meta').doc('status').set({ seekersLost: true }, { merge: true })
+          fetch('/game-lost', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (!data.success && data.error) {
+                console.error('Failed to set seekersLost:', data.error);
+              }
+            })
             .catch(err => {
               console.error('Failed to set seekersLost:', err);
             });
