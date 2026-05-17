@@ -1,5 +1,5 @@
 {
-  "currentRound": 5,
+  "currentRound": 6,
   "rounds": [
     {
       "id": 1,
@@ -33,13 +33,13 @@
     },
     {
       "id": 6,
-      "items": ["Vattenkrasse", "Gryteryd", "Nymane", "Tanum", "Drummare", "Hektar", "Daggkaprifol", "Lanespelare"],
-      "hidersCount": 13,
+      "items": ["Vattenkrasse", "Gryteryd", "Nymane", "Tanum", "Drummare", "Hektar", "Daggkaprifol", "Lanespelare", "Rigga", "Hidingsta", "Upphetta"],
+      "hidersCount": 10,
       "password": "garlicbreadwins"
     },
     {
       "id": 7,
-      "items": ["Raffelbjork", "Ploja", "Ostbit", "Slattum", "Silverhajmal", "Rigga", "Hidingsta", "Upphetta", "Skytta", "Racka", "Rodalm"],
+      "items": ["Raffelbjork", "Ploja", "Ostbit", "Slattum", "Silverhajmal", "Racka", "Rodalm"],
       "hidersCount": 13,
       "password": "porcupine84"
     }
