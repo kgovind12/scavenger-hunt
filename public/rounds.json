@@ -27,13 +27,13 @@
     },
     {
       "id": 5,
-      "items": ["Skubb", "Kuggis", "Stigbygel", "Trattkaktus", "Hektar", "Daggkaprifol", "Lanespelare"],
-      "hidersCount": 12,
+      "items": ["Skubb", "Kuggis", "Stigbygel", "Trattkaktus", "Trofast", "Skallebo", "Malm", "Drona"],
+      "hidersCount": 11,
       "password": "sandcorn23"
     },
     {
       "id": 6,
-      "items": ["Vattenkrasse", "Gryteryd", "Trofast", "Skallebo", "Malm", "Nymane", "Drona", "Tanum", "Billy", "Drummare"],
+      "items": ["Vattenkrasse", "Gryteryd", "Nymane", "Tanum", "Drummare", "Hektar", "Daggkaprifol", "Lanespelare"],
       "hidersCount": 13,
       "password": "garlicbreadwins"
     },
